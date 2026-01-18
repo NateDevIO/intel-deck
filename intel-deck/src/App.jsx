@@ -17,6 +17,7 @@ import { LoadingSpinner } from './components/common/LoadingSpinner';
 import { EmptyState } from './components/common/EmptyState';
 import { Toast } from './components/common/Toast';
 import { SettingsModal } from './components/common/SettingsModal';
+import { MobileSavedModal } from './components/common/MobileSavedModal';
 import { Button } from './components/common/Button';
 import { analyzeContent } from './services/claudeApi';
 import { generateSWOT, generateTalkingPoints } from './services/aiGenerators';
@@ -47,6 +48,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
+  const [showMobileSaved, setShowMobileSaved] = useState(false);
   const [toast, setToast] = useState({ show: false, type: 'info', message: '' });
   const [rawContent, setRawContent] = useState('');
 
@@ -447,11 +449,56 @@ function App() {
       const lastAnalysis = results[results.length - 1];
       setCurrentAnalysis(lastAnalysis);
       setSelectedCompetitorId(lastAnalysis.id);
-      showToast('success', `Analyzed ${results.length} of ${urls.length} URLs. Generating SWOT & Talking Points...`);
+      showToast('success', `Analyzed ${results.length} URLs. Now generating SWOT & Talking Points for all...`);
 
-      // Auto-generate SWOT and Talking Points for the displayed analysis
-      autoGenerateExtras(lastAnalysis);
+      // Generate SWOT and Talking Points for ALL analyses in background
+      generateSwotForAll(results);
     }
+  };
+
+  // Generate SWOT for all batch results
+  const generateSwotForAll = async (analyses) => {
+    setIsGeneratingSwot(true);
+    setIsGeneratingTalkingPoints(true);
+
+    for (let i = 0; i < analyses.length; i++) {
+      const analysis = analyses[i];
+
+      try {
+        const [swotResult, talkingPointsResult] = await Promise.all([
+          generateSWOT(analysis, companyInfo).catch(() => null),
+          generateTalkingPoints(analysis, companyInfo).catch(() => null)
+        ]);
+
+        // Save to stored competitor
+        updateCompetitor(analysis.id, {
+          swot: swotResult,
+          talkingPoints: talkingPointsResult
+        });
+
+        // If this is the currently displayed analysis, update the UI
+        if (analysis.id === selectedCompetitorId) {
+          setSwot(swotResult);
+          setTalkingPoints(talkingPointsResult);
+          setCurrentAnalysis(prev => ({
+            ...prev,
+            swot: swotResult,
+            talkingPoints: talkingPointsResult
+          }));
+        }
+
+        // Show progress
+        if (i < analyses.length - 1) {
+          showToast('info', `Generated SWOT for ${analysis.companyName} (${i + 1}/${analyses.length})`);
+        }
+      } catch (err) {
+        console.error(`Failed to generate SWOT for ${analysis.companyName}:`, err);
+      }
+    }
+
+    setIsGeneratingSwot(false);
+    setIsGeneratingTalkingPoints(false);
+    showToast('success', `SWOT & Talking Points generated for all ${analyses.length} competitors`);
   };
 
   // Comparison handlers
@@ -499,6 +546,10 @@ function App() {
         onSettingsClick={() => setShowSettings(true)}
         isDark={isDark}
         onToggleDark={toggleDark}
+        onNewAnalysis={handleNewAnalysis}
+        onShowSaved={() => setShowMobileSaved(true)}
+        savedCount={competitors.length}
+        showMobileNav={true}
       />
 
       <div className="flex-1 flex">
@@ -615,6 +666,15 @@ function App() {
         onSaveCompanyInfo={setCompanyInfo}
         customFields={customFields}
         onSaveCustomFields={setCustomFields}
+      />
+
+      {/* Mobile Saved Analyses Modal */}
+      <MobileSavedModal
+        isOpen={showMobileSaved}
+        onClose={() => setShowMobileSaved(false)}
+        competitors={competitors}
+        onSelect={handleSelectCompetitor}
+        onDelete={handleDeleteCompetitor}
       />
 
       {/* Toast */}
