@@ -9,8 +9,7 @@ const EXAMPLE_URLS = [
   'notion.so/pricing',
   'linear.app/pricing',
   'figma.com/pricing',
-  'airtable.com/pricing',
-  'clickup.com/pricing'
+  'airtable.com/pricing'
 ];
 
 export function BatchUrlInput({ onBatchAnalyze, isLoading }) {

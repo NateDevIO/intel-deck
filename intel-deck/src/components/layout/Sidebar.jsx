@@ -195,7 +195,7 @@ export const Sidebar = forwardRef(function Sidebar({
   const selectedForCompare = compareIds?.length || 0;
 
   return (
-    <aside className="w-72 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex flex-col h-full">
+    <aside className="hidden md:flex w-72 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex-col h-full">
       {/* Header */}
       <div className="p-4 border-b border-gray-100 dark:border-gray-800">
         <div className="flex items-center justify-between mb-3">

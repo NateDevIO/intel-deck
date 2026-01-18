@@ -91,8 +91,7 @@ export function UrlInput({ onContentFetched, isLoading: externalLoading }) {
             'notion.so/pricing',
             'linear.app/pricing',
             'figma.com/pricing',
-            'airtable.com/pricing',
-            'clickup.com/pricing'
+            'airtable.com/pricing'
           ].map((example) => (
             <button
               key={example}

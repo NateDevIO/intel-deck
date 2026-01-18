@@ -242,6 +242,14 @@ function App() {
         talkingPoints: talkingPointsResult
       }));
 
+      // Also save to the stored competitor if it exists
+      if (analysis.id) {
+        updateCompetitor(analysis.id, {
+          swot: swotResult,
+          talkingPoints: talkingPointsResult
+        });
+      }
+
       if (swotResult && talkingPointsResult) {
         showToast('success', 'SWOT & Talking Points generated');
       }
@@ -436,8 +444,13 @@ function App() {
     setBatchProgress(null);
 
     if (results.length > 0) {
-      setCurrentAnalysis(results[results.length - 1]);
-      showToast('success', `Analyzed ${results.length} of ${urls.length} URLs`);
+      const lastAnalysis = results[results.length - 1];
+      setCurrentAnalysis(lastAnalysis);
+      setSelectedCompetitorId(lastAnalysis.id);
+      showToast('success', `Analyzed ${results.length} of ${urls.length} URLs. Generating SWOT & Talking Points...`);
+
+      // Auto-generate SWOT and Talking Points for the displayed analysis
+      autoGenerateExtras(lastAnalysis);
     }
   };
 
@@ -543,7 +556,7 @@ function App() {
                   size="lg"
                   message={
                     batchProgress
-                      ? `Analyzing URL ${batchProgress.current} of ${batchProgress.total}...`
+                      ? `Analyzing URL ${batchProgress.current} of ${batchProgress.total}... (est. ${Math.ceil((batchProgress.total - batchProgress.current + 1) * 0.5)}-${batchProgress.total - batchProgress.current + 1} min remaining)`
                       : loadingMessages[loadingMessageIndex]
                   }
                 />
