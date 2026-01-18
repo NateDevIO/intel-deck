@@ -2,15 +2,20 @@
 
 AI-powered competitive intelligence tool that transforms competitor websites into structured battlecards for sales teams.
 
+**Live Demo:** [intel-deck.vercel.app](https://intel-deck.vercel.app)
+
 ## Features
 
 - **URL Analysis** - Paste any competitor's pricing or product page URL
+- **Batch Analysis** - Analyze multiple competitors at once (up to 10 URLs)
 - **AI Extraction** - Claude AI extracts pricing, positioning, features, and social proof
 - **Multi-dimensional Pricing** - Handles complex pricing (multiple seat types, usage tiers)
 - **SWOT Analysis** - Auto-generated strengths, weaknesses, opportunities, threats
 - **Sales Talking Points** - AI-generated competitive positioning for sales calls
 - **Competitor Library** - Save and organize multiple competitor analyses
-- **Side-by-Side Comparison** - Compare two competitors directly
+- **Side-by-Side Comparison** - Compare two or more competitors directly
+- **Dark Mode** - Full dark mode support
+- **Mobile Responsive** - Works on mobile devices with dedicated navigation
 - **Multiple Export Formats**:
   - Markdown (for docs/wikis)
   - Slack message (formatted for channels)
@@ -19,13 +24,14 @@ AI-powered competitive intelligence tool that transforms competitor websites int
 
 ## Tech Stack
 
-- **Frontend**: React 19 + Vite
+- **Frontend**: React 19 + Vite 7
 - **Styling**: Tailwind CSS v4
-- **AI**: Claude API (Anthropic)
+- **AI**: Claude API (Anthropic) via Vercel Serverless Functions
 - **URL Fetching**: Jina AI Reader (primary) + Browserless.io (fallback for JS-heavy sites)
+- **Hosting**: Vercel
 - **Icons**: Lucide React
 
-## Quick Start
+## Quick Start (Local Development)
 
 1. **Clone and install**
    ```bash
@@ -38,9 +44,10 @@ AI-powered competitive intelligence tool that transforms competitor websites int
    cp .env.example .env.local
    ```
 
-   Edit `.env.local` and add your Claude API key:
+   Edit `.env.local` and add your API keys:
    ```
    VITE_CLAUDE_API_KEY=sk-ant-api03-your-key-here
+   VITE_BROWSERLESS_TOKEN=your-browserless-token (optional)
    ```
 
 3. **Start development server**
@@ -50,65 +57,86 @@ AI-powered competitive intelligence tool that transforms competitor websites int
 
 4. **Open** http://localhost:5173
 
+## Deploying to Vercel
+
+The recommended deployment method uses Vercel with serverless functions to keep API keys secure.
+
+1. **Push to GitHub**
+
+2. **Import to Vercel**
+   - Connect your GitHub repo to Vercel
+   - Set **Root Directory** to `intel-deck`
+   - Framework preset: Vite (auto-detected)
+
+3. **Add Environment Variables** (in Vercel Project Settings)
+
+   | Variable | Required | Description |
+   |----------|----------|-------------|
+   | `CLAUDE_API_KEY` | Yes | Your Anthropic API key (no VITE_ prefix!) |
+   | `BROWSERLESS_TOKEN` | No | Browserless.io token for JS-heavy sites |
+
+   **Important:** Use `CLAUDE_API_KEY` (not `VITE_CLAUDE_API_KEY`) for Vercel deployment. This keeps the key server-side and secure.
+
+4. **Deploy** - Vercel will auto-deploy on every push to main
+
 ## Environment Variables
 
+### For Local Development (.env.local)
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `VITE_CLAUDE_API_KEY` | Yes | Your Anthropic API key ([get one](https://console.anthropic.com/)) |
-| `VITE_BROWSERLESS_TOKEN` | No | Browserless.io token for JS-heavy sites ([get one](https://www.browserless.io/)) |
-| `VITE_BROWSERLESS_PROXY_URL` | No* | Cloudflare Worker proxy URL (required if using Browserless) |
+| `VITE_BROWSERLESS_TOKEN` | No | Browserless.io token for JS-heavy sites |
 
-*See [Browserless Setup](#browserless-setup-optional) below.
-
-## Browserless Setup (Optional)
-
-Some websites (like Notion, Linear) render pricing with JavaScript. Browserless.io provides headless Chrome rendering as a fallback.
-
-1. Get a free Browserless token at https://www.browserless.io/ (1000 requests/month)
-
-2. Deploy the CORS proxy (Browserless doesn't support browser requests directly):
-   - Go to https://workers.cloudflare.com/
-   - Create a new Worker
-   - Paste the code from `cloudflare-worker/worker.js`
-   - Deploy and copy your Worker URL
-
-3. Add to `.env.local`:
-   ```
-   VITE_BROWSERLESS_TOKEN=your-token-here
-   VITE_BROWSERLESS_PROXY_URL=https://your-worker.workers.dev
-   ```
+### For Vercel Production
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `CLAUDE_API_KEY` | Yes | Your Anthropic API key (server-side, secure) |
+| `BROWSERLESS_TOKEN` | No | Browserless.io token (server-side, secure) |
 
 ## Usage
 
-1. **Analyze a competitor**: Paste a pricing page URL (e.g., `https://slack.com/pricing`)
+1. **Analyze a competitor**: Enter a pricing page URL (e.g., `https://slack.com/pricing`)
 2. **Review extraction**: Check the pricing tiers, positioning, and features
-3. **Generate insights**: SWOT analysis and talking points are auto-generated
+3. **Auto-generated insights**: SWOT analysis and talking points generate automatically
 4. **Save to library**: Click "Save" to add to your competitor library
 5. **Export**: Use the export menu to share in your preferred format
 6. **Compare**: With 2+ saved competitors, use the compare feature
+7. **Batch analyze**: Use "Batch URLs" tab to analyze multiple competitors at once
+
+## Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl+N` | New analysis |
+| `Ctrl+S` | Save current analysis |
+| `/` | Focus search |
 
 ## Project Structure
 
 ```
 intel-deck/
+├── api/                    # Vercel serverless functions
+│   ├── claude.js          # Claude API proxy
+│   └── fetch-url.js       # Browserless proxy
 ├── src/
 │   ├── components/
-│   │   ├── analysis/       # Analysis display components
-│   │   ├── common/         # Shared UI components
-│   │   ├── comparison/     # Competitor comparison view
-│   │   ├── export/         # Export functionality
-│   │   ├── input/          # URL input form
-│   │   └── layout/         # Header, Sidebar, layout
-│   ├── hooks/              # Custom React hooks
-│   ├── services/           # API integrations (Claude, URL fetching)
-│   └── utils/              # Export templates, helpers
-├── cloudflare-worker/      # CORS proxy for Browserless
+│   │   ├── analysis/      # Analysis display components
+│   │   ├── common/        # Shared UI components
+│   │   ├── comparison/    # Competitor comparison view
+│   │   ├── export/        # Export functionality
+│   │   ├── input/         # URL input forms
+│   │   └── layout/        # Header, Sidebar, layout
+│   ├── hooks/             # Custom React hooks
+│   ├── services/          # API integrations
+│   ├── utils/             # Export templates, helpers
+│   └── data/              # Sample data
+├── cloudflare-worker/     # Legacy CORS proxy (not needed for Vercel)
 └── public/
 ```
 
-## API Usage
+## API Usage & Costs
 
-The app makes direct API calls to:
+The app uses:
 - **Claude API** - For content analysis (~4K tokens per analysis)
 - **Jina AI** - Free URL-to-markdown conversion
 - **Browserless** (optional) - Headless Chrome for JS rendering
@@ -122,7 +150,11 @@ npm run build
 npm run preview  # Test production build locally
 ```
 
-Output is in `dist/` - deploy to any static hosting (Vercel, Netlify, Cloudflare Pages).
+Output is in `dist/` - deploy to Vercel, Netlify, or any static hosting.
+
+## Credits
+
+Coded by Nate
 
 ## License
 
