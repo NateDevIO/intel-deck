@@ -1,12 +1,5 @@
 // Fetch URL content with Jina AI as primary and Browserless as fallback
 const JINA_READER_API = 'https://r.jina.ai/';
-const BROWSERLESS_DIRECT_API = 'https://chrome.browserless.io/content';
-
-// Get proxy URL from env, or fall back to direct API (which will fail with CORS in browser)
-const getBrowserlessApi = () => {
-  const proxyUrl = import.meta.env.VITE_BROWSERLESS_PROXY_URL;
-  return proxyUrl || null; // Return null if no proxy configured
-};
 
 // Check if content likely contains ACTUAL pricing data (dollar amounts, not just tier names)
 function hasPricingIndicators(content) {
@@ -47,38 +40,27 @@ async function fetchViaJina(url) {
   return await response.text();
 }
 
-// Fetch via Browserless API (renders JavaScript)
-async function fetchViaBrowserless(url, token) {
-  const proxyUrl = getBrowserlessApi();
-
-  if (!proxyUrl) {
-    throw new Error('Browserless proxy URL not configured. Set VITE_BROWSERLESS_PROXY_URL in .env.local');
-  }
-
-  // Call through the CORS proxy
-  const response = await fetch(proxyUrl, {
+// Fetch via Browserless API (renders JavaScript) - through server-side proxy
+async function fetchViaBrowserless(url) {
+  const response = await fetch('/api/fetch-url', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      url: url,
-      token: token,
-    })
+    body: JSON.stringify({ url })
   });
 
-  if (!response.ok) {
-    if (response.status === 401 || response.status === 403) {
-      throw new Error('Invalid Browserless token.');
-    }
-    if (response.status === 429) {
-      throw new Error('Browserless rate limit exceeded.');
-    }
-    throw new Error(`Browserless fetch failed: ${response.status}`);
+  const data = await response.json();
+
+  if (!data.available) {
+    throw new Error('Browserless not configured on server');
   }
 
-  const html = await response.text();
-  return extractTextFromHtml(html);
+  if (!response.ok) {
+    throw new Error(data.error || `Browserless fetch failed: ${response.status}`);
+  }
+
+  return extractTextFromHtml(data.html);
 }
 
 // Extract text from HTML
@@ -123,7 +105,7 @@ function extractTextFromHtml(html) {
   return text;
 }
 
-export async function fetchUrlContent(url, browserlessToken = null) {
+export async function fetchUrlContent(url) {
   // Validate URL
   if (!url.startsWith('http://') && !url.startsWith('https://')) {
     url = 'https://' + url;
@@ -155,27 +137,23 @@ export async function fetchUrlContent(url, browserlessToken = null) {
     return { url, content: jinaContent, source: 'jina' };
   }
 
-  // If Browserless token is available, try it as fallback
-  if (browserlessToken) {
-    console.log('[URL Fetcher] Jina lacks pricing data, trying Browserless fallback...');
-    try {
-      const browserlessContent = await fetchViaBrowserless(url, browserlessToken);
-      const browserlessHasPricing = browserlessContent && browserlessContent.length >= 100 && hasPricingIndicators(browserlessContent);
-      console.log(`[URL Fetcher] Browserless content: ${browserlessContent?.length || 0} chars, has pricing: ${browserlessHasPricing}`);
+  // Try Browserless as fallback (server checks if token is configured)
+  console.log('[URL Fetcher] Jina lacks pricing data, trying Browserless fallback...');
+  try {
+    const browserlessContent = await fetchViaBrowserless(url);
+    const browserlessHasPricing = browserlessContent && browserlessContent.length >= 100 && hasPricingIndicators(browserlessContent);
+    console.log(`[URL Fetcher] Browserless content: ${browserlessContent?.length || 0} chars, has pricing: ${browserlessHasPricing}`);
 
-      if (browserlessContent && browserlessContent.length >= 100) {
-        // If Browserless has better pricing indicators, use it
-        if (browserlessHasPricing) {
-          console.log('[URL Fetcher] Using Browserless content (has pricing data)');
-          return { url, content: browserlessContent, source: 'browserless' };
-        }
+    if (browserlessContent && browserlessContent.length >= 100) {
+      // If Browserless has better pricing indicators, use it
+      if (browserlessHasPricing) {
+        console.log('[URL Fetcher] Using Browserless content (has pricing data)');
+        return { url, content: browserlessContent, source: 'browserless' };
       }
-    } catch (err) {
-      console.warn('[URL Fetcher] Browserless fallback failed:', err.message);
-      // Continue with Jina content if available
     }
-  } else {
-    console.log('[URL Fetcher] No Browserless token configured, skipping fallback');
+  } catch (err) {
+    console.warn('[URL Fetcher] Browserless fallback failed:', err.message);
+    // Continue with Jina content if available
   }
 
   // Fall back to Jina content if available

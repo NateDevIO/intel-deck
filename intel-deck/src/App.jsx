@@ -410,7 +410,7 @@ function App() {
 
       try {
         // Fetch URL content
-        const { content, url } = await fetchUrlContent(urls[i], browserlessToken);
+        const { content, url } = await fetchUrlContent(urls[i]);
 
         // Analyze content
         const result = await analyzeContent(content);
