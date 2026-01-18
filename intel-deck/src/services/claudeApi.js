@@ -76,34 +76,21 @@ SOURCE CONTENT:
 {content}
 ---`;
 
-export async function analyzeContent(content, apiKey) {
-  if (!apiKey) {
-    throw new Error('API key not configured. Please add your Claude API key in settings.');
-  }
-
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
+export async function analyzeContent(content) {
+  const response = await fetch('/api/claude', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 4096,
-      messages: [
-        {
-          role: 'user',
-          content: EXTRACTION_PROMPT.replace('{content}', content)
-        }
-      ]
+      prompt: EXTRACTION_PROMPT.replace('{content}', content),
+      maxTokens: 4096
     })
   });
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`API error: ${response.status} - ${errorText}`);
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(`API error: ${response.status} - ${errorData.error || 'Unknown error'}`);
   }
 
   const data = await response.json();

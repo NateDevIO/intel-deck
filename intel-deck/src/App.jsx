@@ -155,12 +155,6 @@ function App() {
   };
 
   const handleAnalyze = async (content, sourceUrl = null) => {
-    if (!apiKey) {
-      setShowSettings(true);
-      showToast('error', 'Please add your Claude API key first');
-      return;
-    }
-
     // Store previous analysis for trend comparison
     const previousAnalysis = currentAnalysis;
 
@@ -173,7 +167,7 @@ function App() {
     setTrendChanges(null);
 
     try {
-      const result = await analyzeContent(content, apiKey);
+      const result = await analyzeContent(content);
 
       const fullAnalysis = {
         id: crypto.randomUUID(),
@@ -227,11 +221,11 @@ function App() {
     try {
       // Generate both in parallel
       const [swotResult, talkingPointsResult] = await Promise.all([
-        generateSWOT(analysis, companyInfo, apiKey).catch(err => {
+        generateSWOT(analysis, companyInfo).catch(err => {
           console.error('SWOT generation failed:', err);
           return null;
         }),
-        generateTalkingPoints(analysis, companyInfo, apiKey).catch(err => {
+        generateTalkingPoints(analysis, companyInfo).catch(err => {
           console.error('Talking points generation failed:', err);
           return null;
         })
@@ -342,13 +336,13 @@ function App() {
 
   // SWOT Generation
   const handleGenerateSwot = async () => {
-    if (!currentAnalysis || !apiKey) return;
+    if (!currentAnalysis) return;
 
     setIsGeneratingSwot(true);
     setSwot(null);
 
     try {
-      const result = await generateSWOT(currentAnalysis, companyInfo, apiKey);
+      const result = await generateSWOT(currentAnalysis, companyInfo);
       setSwot(result);
 
       // Persist to saved competitor if it's saved
@@ -367,13 +361,13 @@ function App() {
 
   // Talking Points Generation
   const handleGenerateTalkingPoints = async () => {
-    if (!currentAnalysis || !apiKey) return;
+    if (!currentAnalysis) return;
 
     setIsGeneratingTalkingPoints(true);
     setTalkingPoints(null);
 
     try {
-      const result = await generateTalkingPoints(currentAnalysis, companyInfo, apiKey);
+      const result = await generateTalkingPoints(currentAnalysis, companyInfo);
       setTalkingPoints(result);
 
       // Persist to saved competitor if it's saved
@@ -405,12 +399,6 @@ function App() {
 
   // Batch URL Analysis
   const handleBatchAnalyze = async (urls) => {
-    if (!apiKey) {
-      setShowSettings(true);
-      showToast('error', 'Please add your Claude API key first');
-      return;
-    }
-
     setIsLoading(true);
     setError(null);
     setBatchProgress({ current: 0, total: urls.length });
@@ -425,7 +413,7 @@ function App() {
         const { content, url } = await fetchUrlContent(urls[i], browserlessToken);
 
         // Analyze content
-        const result = await analyzeContent(content, apiKey);
+        const result = await analyzeContent(content);
 
         const fullAnalysis = {
           id: crypto.randomUUID(),

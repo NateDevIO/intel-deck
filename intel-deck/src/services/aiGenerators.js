@@ -46,25 +46,21 @@ YOUR COMPANY:
 COMPETITOR ANALYSIS:
 {competitorData}`;
 
-async function callClaudeAPI(prompt, apiKey) {
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
+async function callClaudeAPI(prompt) {
+  const response = await fetch('/api/claude', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 2048,
-      messages: [{ role: 'user', content: prompt }]
+      prompt,
+      maxTokens: 2048
     })
   });
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`API error: ${response.status} - ${errorText}`);
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(`API error: ${response.status} - ${errorData.error || 'Unknown error'}`);
   }
 
   const data = await response.json();
@@ -81,11 +77,7 @@ async function callClaudeAPI(prompt, apiKey) {
   }
 }
 
-export async function generateSWOT(competitorAnalysis, myCompanyInfo, apiKey) {
-  if (!apiKey) {
-    throw new Error('API key required');
-  }
-
+export async function generateSWOT(competitorAnalysis, myCompanyInfo) {
   const myCompany = myCompanyInfo?.name
     ? `Name: ${myCompanyInfo.name}\nDescription: ${myCompanyInfo.description || 'N/A'}\nKey Strengths: ${myCompanyInfo.strengths || 'N/A'}`
     : 'No company information provided - generate general competitive insights';
@@ -102,14 +94,10 @@ export async function generateSWOT(competitorAnalysis, myCompanyInfo, apiKey) {
     .replace('{myCompany}', myCompany)
     .replace('{competitorData}', competitorData);
 
-  return callClaudeAPI(prompt, apiKey);
+  return callClaudeAPI(prompt);
 }
 
-export async function generateTalkingPoints(competitorAnalysis, myCompanyInfo, apiKey) {
-  if (!apiKey) {
-    throw new Error('API key required');
-  }
-
+export async function generateTalkingPoints(competitorAnalysis, myCompanyInfo) {
   const myCompany = myCompanyInfo?.name
     ? `Name: ${myCompanyInfo.name}\nDescription: ${myCompanyInfo.description || 'N/A'}\nKey Strengths: ${myCompanyInfo.strengths || 'N/A'}`
     : 'No company information provided - generate general competitive talking points';
@@ -126,5 +114,5 @@ export async function generateTalkingPoints(competitorAnalysis, myCompanyInfo, a
     .replace('{myCompany}', myCompany)
     .replace('{competitorData}', competitorData);
 
-  return callClaudeAPI(prompt, apiKey);
+  return callClaudeAPI(prompt);
 }
