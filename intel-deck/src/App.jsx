@@ -522,7 +522,6 @@ function App() {
                 onAnalyze={handleAnalyze}
                 onBatchAnalyze={handleBatchAnalyze}
                 isLoading={isLoading}
-                browserlessToken={browserlessToken}
               />
             )}
 

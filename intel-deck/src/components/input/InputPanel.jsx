@@ -12,7 +12,7 @@ const TABS = [
   { id: 'paste', label: 'Paste Text', icon: ClipboardPaste },
 ];
 
-export function InputPanel({ onAnalyze, onBatchAnalyze, isLoading, browserlessToken }) {
+export function InputPanel({ onAnalyze, onBatchAnalyze, isLoading }) {
   const [activeTab, setActiveTab] = useState('url');
   const [content, setContent] = useState('');
   const [sourceUrl, setSourceUrl] = useState(null);
@@ -98,7 +98,6 @@ export function InputPanel({ onAnalyze, onBatchAnalyze, isLoading, browserlessTo
           <UrlInput
             onContentFetched={handleUrlContentFetched}
             isLoading={isLoading}
-            browserlessToken={browserlessToken}
           />
         )}
 
@@ -106,7 +105,6 @@ export function InputPanel({ onAnalyze, onBatchAnalyze, isLoading, browserlessTo
           <BatchUrlInput
             onBatchAnalyze={onBatchAnalyze}
             isLoading={isLoading}
-            browserlessToken={browserlessToken}
           />
         )}
 

@@ -3,7 +3,7 @@ import { Link, Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '../common/Button';
 import { fetchUrlContent } from '../../services/urlFetcher';
 
-export function UrlInput({ onContentFetched, isLoading: externalLoading, browserlessToken }) {
+export function UrlInput({ onContentFetched, isLoading: externalLoading }) {
   const [url, setUrl] = useState('');
   const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState(null);
@@ -19,7 +19,7 @@ export function UrlInput({ onContentFetched, isLoading: externalLoading, browser
     setFetchSource(null);
 
     try {
-      const result = await fetchUrlContent(url.trim(), browserlessToken);
+      const result = await fetchUrlContent(url.trim());
       setFetchSource(result.source);
       onContentFetched(result.content, result.url);
     } catch (err) {
@@ -75,6 +75,12 @@ export function UrlInput({ onContentFetched, isLoading: externalLoading, browser
         </Button>
       </div>
 
+      <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3 mb-4">
+        <p className="text-xs text-amber-700 dark:text-amber-400">
+          <strong>Note:</strong> Analysis typically takes 20-30 seconds per URL. SWOT and Talking Points generate afterward and may take an additional 20-30 seconds.
+        </p>
+      </div>
+
       <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
         <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Example URLs:</p>
         <div className="flex flex-wrap gap-2">
@@ -82,7 +88,11 @@ export function UrlInput({ onContentFetched, isLoading: externalLoading, browser
             'asana.com/pricing',
             'slack.com/pricing',
             'monday.com/pricing',
-            'notion.so/pricing'
+            'notion.so/pricing',
+            'linear.app/pricing',
+            'figma.com/pricing',
+            'airtable.com/pricing',
+            'clickup.com/pricing'
           ].map((example) => (
             <button
               key={example}
@@ -94,7 +104,7 @@ export function UrlInput({ onContentFetched, isLoading: externalLoading, browser
           ))}
         </div>
         <p className="text-xs text-gray-400 dark:text-gray-500 mt-3">
-          Powered by Jina AI Reader{browserlessToken ? ' with Browserless fallback' : ''} for JavaScript-rendered pages
+          Powered by Jina AI Reader with Browserless fallback for JavaScript-rendered pages
         </p>
       </div>
     </div>

@@ -2,6 +2,17 @@ import { useState } from 'react';
 import { Link, Loader2, AlertCircle, Plus, X, Play } from 'lucide-react';
 import { Button } from '../common/Button';
 
+const EXAMPLE_URLS = [
+  'asana.com/pricing',
+  'slack.com/pricing',
+  'monday.com/pricing',
+  'notion.so/pricing',
+  'linear.app/pricing',
+  'figma.com/pricing',
+  'airtable.com/pricing',
+  'clickup.com/pricing'
+];
+
 export function BatchUrlInput({ onBatchAnalyze, isLoading }) {
   const [urls, setUrls] = useState(['']);
   const [errors, setErrors] = useState({});
@@ -106,9 +117,36 @@ export function BatchUrlInput({ onBatchAnalyze, isLoading }) {
         </Button>
       </div>
 
-      <p className="text-xs text-gray-400">
-        Add up to 10 competitor URLs to analyze in batch
-      </p>
+      <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
+        <p className="text-xs text-amber-700 dark:text-amber-400">
+          <strong>Note:</strong> Analysis takes 20-30 seconds per URL. For {validUrlCount || 1} URL{validUrlCount !== 1 ? 's' : ''}, expect approximately {Math.ceil((validUrlCount || 1) * 0.5)}-{(validUrlCount || 1)} minute{(validUrlCount || 1) > 1 ? 's' : ''} total.
+        </p>
+      </div>
+
+      <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+        <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Example URLs:</p>
+        <div className="flex flex-wrap gap-2">
+          {EXAMPLE_URLS.map((example) => (
+            <button
+              key={example}
+              onClick={() => {
+                const emptyIndex = urls.findIndex(u => !u.trim());
+                if (emptyIndex >= 0) {
+                  updateUrl(emptyIndex, 'https://' + example);
+                } else if (urls.length < 10) {
+                  setUrls([...urls, 'https://' + example]);
+                }
+              }}
+              className="text-xs px-2 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded hover:border-primary-300 dark:hover:border-primary-500 hover:text-primary-600 dark:text-gray-300 dark:hover:text-primary-400 transition-colors"
+            >
+              {example}
+            </button>
+          ))}
+        </div>
+        <p className="text-xs text-gray-400 dark:text-gray-500 mt-3">
+          Powered by Jina AI Reader with Browserless fallback for JavaScript-rendered pages
+        </p>
+      </div>
     </div>
   );
 }
