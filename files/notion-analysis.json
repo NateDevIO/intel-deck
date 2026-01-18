@@ -1,0 +1,171 @@
+{
+  "id": "demo-notion-001",
+  "companyName": "Notion",
+  "sourceUrl": "https://notion.so/pricing",
+  "sourceType": "paste",
+  "analyzedAt": "2025-01-13T10:30:00Z",
+  
+  "extraction": {
+    "pricing": {
+      "tiers": [
+        {
+          "name": "Free",
+          "price": "$0",
+          "billingPeriod": null,
+          "priceModel": "free",
+          "targetCustomer": "Individuals organizing their work and life",
+          "keyFeatures": [
+            "Unlimited pages & blocks",
+            "Share with up to 5 guests",
+            "Sync across devices",
+            "7-day page history"
+          ],
+          "limitations": [
+            "Limited to 5 guests",
+            "Only 7-day page history"
+          ],
+          "confidence": "high"
+        },
+        {
+          "name": "Plus",
+          "price": "$10",
+          "billingPeriod": "per seat/month (billed annually)",
+          "priceModel": "per_seat",
+          "targetCustomer": "Small teams and professionals",
+          "keyFeatures": [
+            "Everything in Free",
+            "Unlimited file uploads",
+            "30-day page history",
+            "Invite up to 100 guests"
+          ],
+          "limitations": [
+            "Limited to 100 guests"
+          ],
+          "confidence": "high"
+        },
+        {
+          "name": "Business",
+          "price": "$18",
+          "billingPeriod": "per seat/month (billed annually)",
+          "priceModel": "per_seat",
+          "targetCustomer": "Companies using Notion to connect teams",
+          "keyFeatures": [
+            "Everything in Plus",
+            "SAML SSO",
+            "Private teamspaces",
+            "90-day page history",
+            "PDF export with subpages"
+          ],
+          "limitations": [],
+          "confidence": "high"
+        },
+        {
+          "name": "Enterprise",
+          "price": "Contact sales",
+          "billingPeriod": null,
+          "priceModel": "contact_sales",
+          "targetCustomer": "Organizations needing advanced controls",
+          "keyFeatures": [
+            "Everything in Business",
+            "Unlimited page history",
+            "User provisioning (SCIM)",
+            "Advanced security controls",
+            "Dedicated success manager"
+          ],
+          "limitations": [],
+          "confidence": "high"
+        }
+      ],
+      "hasFreeTier": true,
+      "hasEnterpriseTier": true,
+      "trialAvailable": true,
+      "trialDuration": "14 days"
+    },
+    
+    "features": {
+      "highlighted": [
+        "Unlimited pages & blocks",
+        "Real-time collaboration",
+        "SAML SSO",
+        "Advanced security controls"
+      ],
+      "byTier": {
+        "Free": ["Unlimited pages & blocks", "Share with 5 guests", "Sync across devices"],
+        "Plus": ["Unlimited file uploads", "30-day page history", "100 guests"],
+        "Business": ["SAML SSO", "Private teamspaces", "90-day history", "PDF export"],
+        "Enterprise": ["Unlimited history", "SCIM provisioning", "Dedicated success manager"]
+      }
+    },
+    
+    "positioning": {
+      "tagline": "Your wiki, docs, & projects. Together.",
+      "targetCustomers": [
+        "Individuals",
+        "Small teams",
+        "Growing companies",
+        "Enterprise organizations"
+      ],
+      "differentiators": [
+        "All-in-one workspace replacing scattered tools",
+        "Flexible building blocks for any workflow",
+        "Scales from individual to enterprise"
+      ],
+      "valuePropositions": [
+        "Replace wiki, docs, and project tools with one workspace",
+        "Keep remote teams in sync",
+        "Customize to match any workflow"
+      ]
+    },
+    
+    "socialProof": {
+      "customerLogos": [
+        "Toyota",
+        "Spotify",
+        "IBM",
+        "Figma"
+      ],
+      "metricsClaimed": [
+        "50,000+ organizations worldwide"
+      ],
+      "caseStudies": [
+        "How Figma keeps their fully remote team in sync"
+      ],
+      "awards": [],
+      "partnerships": [
+        "Slack",
+        "Google Drive",
+        "GitHub",
+        "Zapier"
+      ]
+    },
+    
+    "callsToAction": {
+      "primary": "Get Notion free",
+      "secondary": [
+        "Contact sales",
+        "Request a demo"
+      ],
+      "urgencyLanguage": null
+    },
+    
+    "extractedQuotes": [
+      {
+        "text": "Your wiki, docs, & projects. Together.",
+        "category": "positioning",
+        "location": "Hero section"
+      },
+      {
+        "text": "Notion is the connective tissue that keeps our fully remote team in sync.",
+        "category": "social_proof",
+        "location": "Customer testimonial"
+      },
+      {
+        "text": "For individuals organizing their work and life",
+        "category": "positioning",
+        "location": "Free tier description"
+      }
+    ]
+  },
+  
+  "rawContent": "Notion Pricing\n\nFree\n$0\nFor individuals organizing their work and life.\n- Unlimited pages & blocks\n- Share with up to 5 guests\n- Sync across devices\n- 7-day page history\n\nPlus\n$10 per seat/month billed annually\n$12 billed monthly\nFor small teams and professionals.\n- Everything in Free\n- Unlimited file uploads\n- 30-day page history\n- Invite up to 100 guests\n\nBusiness\n$18 per seat/month billed annually\nFor companies using Notion to connect teams.\n- Everything in Plus\n- SAML SSO\n- Private teamspaces\n- 90-day page history\n- PDF export with subpages\n\nEnterprise\nContact sales\nFor organizations needing advanced controls.\n- Everything in Business\n- Unlimited page history\n- User provisioning (SCIM)\n- Advanced security controls\n- Dedicated success manager\n\nTrusted by teams at Toyota, Spotify, IBM, and 50,000+ organizations worldwide.\n\"Notion is the connective tissue that keeps our fully remote team in sync.\" - Head of Operations, Figma"
+}
