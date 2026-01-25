@@ -14,41 +14,41 @@ function PricingTier({ tier }) {
   };
 
   return (
-    <div className="border border-gray-200 rounded-lg p-5 hover:border-primary-300 transition-colors group">
+    <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-5 hover:border-primary-300 dark:hover:border-primary-600 transition-colors group bg-white dark:bg-gray-800">
       <div className="flex items-start justify-between mb-3">
-        <h4 className="font-semibold text-gray-900">{tier.name}</h4>
+        <h4 className="font-semibold text-gray-900 dark:text-white">{tier.name}</h4>
         <ConfidenceBadge level={tier.confidence} />
       </div>
 
       <p className="text-3xl font-bold text-primary-600">{tier.price}</p>
       {tier.billingPeriod && (
-        <p className="text-sm text-gray-500 mt-1">{tier.billingPeriod}</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{tier.billingPeriod}</p>
       )}
 
       {tier.seatPrices && Object.keys(tier.seatPrices).length > 1 && (
-        <div className="mt-2 pt-2 border-t border-gray-100">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5">By seat type</p>
+        <div className="mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5">By seat type</p>
           <div className="space-y-1">
             {Object.entries(tier.seatPrices).map(([seatType, price]) => (
               <div key={seatType} className="flex justify-between text-sm">
-                <span className="text-gray-600">{seatType}</span>
-                <span className="font-medium text-gray-900">{price}</span>
+                <span className="text-gray-600 dark:text-gray-400">{seatType}</span>
+                <span className="font-medium text-gray-900 dark:text-white">{price}</span>
               </div>
             ))}
           </div>
         </div>
       )}
 
-      <p className="text-sm text-gray-600 mt-3 pb-3 border-b border-gray-100">
+      <p className="text-sm text-gray-600 dark:text-gray-400 mt-3 pb-3 border-b border-gray-100 dark:border-gray-700">
         {tier.targetCustomer}
       </p>
 
       {tier.keyFeatures?.length > 0 && (
         <div className="mt-3">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Features</p>
+          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Features</p>
           <ul className="space-y-1.5">
             {tier.keyFeatures.slice(0, 4).map((feature, i) => (
-              <li key={i} className="text-sm text-gray-600 flex items-start gap-2">
+              <li key={i} className="text-sm text-gray-600 dark:text-gray-300 flex items-start gap-2">
                 <span className="text-green-500 mt-0.5">+</span>
                 {feature}
               </li>
@@ -64,10 +64,10 @@ function PricingTier({ tier }) {
 
       {tier.limitations?.length > 0 && (
         <div className="mt-3">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Limitations</p>
+          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Limitations</p>
           <ul className="space-y-1.5">
             {tier.limitations.slice(0, 2).map((limit, i) => (
-              <li key={i} className="text-sm text-gray-500 flex items-start gap-2">
+              <li key={i} className="text-sm text-gray-500 dark:text-gray-400 flex items-start gap-2">
                 <span className="text-amber-500 mt-0.5">-</span>
                 {limit}
               </li>
@@ -78,7 +78,7 @@ function PricingTier({ tier }) {
 
       <button
         onClick={handleCopy}
-        className="mt-4 w-full py-2 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity"
+        className="mt-4 w-full py-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 rounded flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity"
       >
         {copied ? (
           <>

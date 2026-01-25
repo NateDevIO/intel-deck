@@ -19,6 +19,10 @@ import { Toast } from './components/common/Toast';
 import { SettingsModal } from './components/common/SettingsModal';
 import { MobileSavedModal } from './components/common/MobileSavedModal';
 import { Button } from './components/common/Button';
+import { KeyboardShortcutsModal } from './components/common/KeyboardShortcutsModal';
+import { ConfirmDialog } from './components/common/ConfirmDialog';
+import { BatchProgress } from './components/common/BatchProgress';
+import { OnboardingBanner } from './components/common/OnboardingBanner';
 import { analyzeContent } from './services/claudeApi';
 import { generateSWOT, generateTalkingPoints } from './services/aiGenerators';
 import { fetchUrlContent } from './services/urlFetcher';
@@ -49,6 +53,11 @@ function App() {
   const [error, setError] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showMobileSaved, setShowMobileSaved] = useState(false);
+  const [showKeyboardHelp, setShowKeyboardHelp] = useState(false);
+  const [showUnsavedConfirm, setShowUnsavedConfirm] = useState(false);
+  const [pendingNewAnalysis, setPendingNewAnalysis] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useLocalStorage('battlecard_show_onboarding', true);
+  const [exampleUrl, setExampleUrl] = useState(null);
   const [toast, setToast] = useState({ show: false, type: 'info', message: '' });
   const [rawContent, setRawContent] = useState('');
 
@@ -68,6 +77,9 @@ function App() {
   const [trendChanges, setTrendChanges] = useState(null);
   const [previousAnalysisDate, setPreviousAnalysisDate] = useState(null);
   const [batchProgress, setBatchProgress] = useState(null);
+  const [batchCurrentUrl, setBatchCurrentUrl] = useState(null);
+  const [batchFailedUrls, setBatchFailedUrls] = useState([]);
+  const [batchCancelled, setBatchCancelled] = useState(false);
 
   // Loading messages
   const loadingMessages = [
@@ -81,13 +93,13 @@ function App() {
   // Keyboard shortcuts
   useKeyboardShortcuts({
     onNewAnalysis: () => {
-      setCurrentAnalysis(null);
-      setSelectedCompetitorId(null);
-      setRawContent('');
-      setError(null);
-      setShowComparison(false);
-      setIsCompareMode(false);
-      setCompareIds([]);
+      // Check if there's unsaved analysis
+      if (currentAnalysis && !isCurrentAnalysisSaved) {
+        setPendingNewAnalysis(true);
+        setShowUnsavedConfirm(true);
+      } else {
+        performNewAnalysis();
+      }
     },
     onSave: () => {
       if (currentAnalysis && !isCurrentAnalysisSaved) {
@@ -106,10 +118,28 @@ function App() {
     },
     onCloseModal: () => {
       setShowSettings(false);
+      setShowKeyboardHelp(false);
+      setShowUnsavedConfirm(false);
+    },
+    onShowHelp: () => {
+      setShowKeyboardHelp(true);
     },
     canSave: currentAnalysis && !competitors.some(c => c.id === currentAnalysis.id),
-    isModalOpen: showSettings
+    isModalOpen: showSettings || showKeyboardHelp || showUnsavedConfirm
   });
+
+  // Helper to actually perform new analysis
+  const performNewAnalysis = () => {
+    setCurrentAnalysis(null);
+    setSelectedCompetitorId(null);
+    setRawContent('');
+    setError(null);
+    setShowComparison(false);
+    setIsCompareMode(false);
+    setCompareIds([]);
+    setSwot(null);
+    setTalkingPoints(null);
+  };
 
   useEffect(() => {
     let interval;
@@ -308,13 +338,36 @@ function App() {
   };
 
   const handleNewAnalysis = () => {
-    setCurrentAnalysis(null);
-    setSelectedCompetitorId(null);
-    setRawContent('');
-    setError(null);
-    setShowComparison(false);
-    setIsCompareMode(false);
-    setCompareIds([]);
+    // Check if there's unsaved analysis
+    if (currentAnalysis && !isCurrentAnalysisSaved) {
+      setPendingNewAnalysis(true);
+      setShowUnsavedConfirm(true);
+    } else {
+      performNewAnalysis();
+    }
+  };
+
+  const handleConfirmNewAnalysis = () => {
+    setShowUnsavedConfirm(false);
+    if (pendingNewAnalysis) {
+      performNewAnalysis();
+      setPendingNewAnalysis(false);
+    }
+  };
+
+  const handleSaveAndNew = () => {
+    if (currentAnalysis) {
+      const analysisToSave = {
+        ...currentAnalysis,
+        swot: swot || currentAnalysis.swot,
+        talkingPoints: talkingPoints || currentAnalysis.talkingPoints
+      };
+      addCompetitor(analysisToSave);
+      showToast('success', `Saved ${currentAnalysis.companyName}`);
+    }
+    setShowUnsavedConfirm(false);
+    performNewAnalysis();
+    setPendingNewAnalysis(false);
   };
 
   const handleReanalyze = async () => {
@@ -407,16 +460,38 @@ function App() {
     }
   };
 
+  // Cancel batch analysis
+  const handleCancelBatch = () => {
+    setBatchCancelled(true);
+  };
+
+  // Retry failed URLs
+  const handleRetryFailed = () => {
+    if (batchFailedUrls.length > 0) {
+      handleBatchAnalyze(batchFailedUrls);
+    }
+  };
+
   // Batch URL Analysis
   const handleBatchAnalyze = async (urls) => {
     setIsLoading(true);
     setError(null);
     setBatchProgress({ current: 0, total: urls.length });
+    setBatchFailedUrls([]);
+    setBatchCancelled(false);
 
     const results = [];
+    const failed = [];
 
     for (let i = 0; i < urls.length; i++) {
+      // Check if cancelled
+      if (batchCancelled) {
+        showToast('info', `Batch cancelled. Analyzed ${results.length} of ${urls.length} URLs.`);
+        break;
+      }
+
       setBatchProgress({ current: i + 1, total: urls.length });
+      setBatchCurrentUrl(urls[i]);
 
       try {
         // Fetch URL content
@@ -438,21 +513,38 @@ function App() {
         addCompetitor(fullAnalysis);
       } catch (err) {
         console.error(`Failed to analyze ${urls[i]}:`, err);
-        showToast('error', `Failed to analyze ${urls[i]}`);
+        failed.push(urls[i]);
       }
     }
 
     setIsLoading(false);
-    setBatchProgress(null);
+    setBatchCurrentUrl(null);
+    setBatchFailedUrls(failed);
 
     if (results.length > 0) {
       const lastAnalysis = results[results.length - 1];
       setCurrentAnalysis(lastAnalysis);
       setSelectedCompetitorId(lastAnalysis.id);
-      showToast('success', `Analyzed ${results.length} URLs. Now generating SWOT & Talking Points for all...`);
+
+      if (failed.length > 0) {
+        showToast('warning', `Analyzed ${results.length}/${urls.length} URLs. ${failed.length} failed.`);
+      } else {
+        showToast('success', `Analyzed ${results.length} URLs. Now generating SWOT & Talking Points for all...`);
+      }
 
       // Generate SWOT and Talking Points for ALL analyses in background
       generateSwotForAll(results);
+    } else if (failed.length > 0) {
+      showToast('error', `All ${failed.length} URLs failed to analyze.`);
+    }
+
+    // Clear batch progress after a delay if complete
+    if (!batchCancelled) {
+      setTimeout(() => {
+        setBatchProgress(null);
+      }, failed.length > 0 ? 5000 : 2000);
+    } else {
+      setBatchProgress(null);
     }
   };
 
@@ -532,6 +624,32 @@ function App() {
     setCompareIds([]);
   };
 
+  // Win/Loss tracking
+  const handleAddOutcome = (outcome) => {
+    if (!selectedCompetitorId) return;
+    const competitor = getCompetitor(selectedCompetitorId);
+    const outcomes = competitor?.outcomes || [];
+    updateCompetitor(selectedCompetitorId, {
+      outcomes: [...outcomes, outcome]
+    });
+    setCurrentAnalysis(prev => ({
+      ...prev,
+      outcomes: [...(prev.outcomes || []), outcome]
+    }));
+    showToast('success', `Logged ${outcome.result} against ${competitor?.companyName}`);
+  };
+
+  const handleRemoveOutcome = (outcomeId) => {
+    if (!selectedCompetitorId) return;
+    const competitor = getCompetitor(selectedCompetitorId);
+    const outcomes = (competitor?.outcomes || []).filter(o => o.id !== outcomeId);
+    updateCompetitor(selectedCompetitorId, { outcomes });
+    setCurrentAnalysis(prev => ({
+      ...prev,
+      outcomes: (prev.outcomes || []).filter(o => o.id !== outcomeId)
+    }));
+  };
+
   const handleRemoveFromComparison = (id) => {
     setCompareIds(prev => prev.filter(cId => cId !== id));
     if (compareIds.length <= 2) {
@@ -577,6 +695,18 @@ function App() {
                 competitors={competitorsToCompare}
                 onRemove={handleRemoveFromComparison}
                 onClose={handleExitComparison}
+                companyInfo={companyInfo}
+              />
+            )}
+
+            {/* Onboarding Banner - show for first-time users */}
+            {!showComparison && !currentAnalysis && !isLoading && showOnboarding && competitors.length === 0 && (
+              <OnboardingBanner
+                onDismiss={() => setShowOnboarding(false)}
+                onTryExample={(url) => {
+                  setExampleUrl(url);
+                  setShowOnboarding(false);
+                }}
               />
             )}
 
@@ -586,6 +716,7 @@ function App() {
                 onAnalyze={handleAnalyze}
                 onBatchAnalyze={handleBatchAnalyze}
                 isLoading={isLoading}
+                initialUrl={exampleUrl}
               />
             )}
 
@@ -601,15 +732,24 @@ function App() {
             )}
 
             {/* Loading State */}
-            {!showComparison && isLoading && (
+            {!showComparison && isLoading && !batchProgress && (
               <div className="mt-8">
                 <LoadingSpinner
                   size="lg"
-                  message={
-                    batchProgress
-                      ? `Analyzing URL ${batchProgress.current} of ${batchProgress.total}... (est. ${Math.ceil((batchProgress.total - batchProgress.current + 1) * 0.5)}-${batchProgress.total - batchProgress.current + 1} min remaining)`
-                      : loadingMessages[loadingMessageIndex]
-                  }
+                  message={loadingMessages[loadingMessageIndex]}
+                />
+              </div>
+            )}
+
+            {/* Batch Progress */}
+            {!showComparison && batchProgress && (
+              <div className="mt-8">
+                <BatchProgress
+                  progress={batchProgress}
+                  currentUrl={batchCurrentUrl}
+                  onCancel={isLoading ? handleCancelBatch : null}
+                  failedUrls={batchFailedUrls}
+                  onRetryFailed={batchFailedUrls.length > 0 && !isLoading ? handleRetryFailed : null}
                 />
               </div>
             )}
@@ -632,6 +772,8 @@ function App() {
                 trendChanges={trendChanges}
                 previousAnalysisDate={previousAnalysisDate}
                 confidence={calculateConfidenceScore(currentAnalysis)}
+                onAddOutcome={handleAddOutcome}
+                onRemoveOutcome={handleRemoveOutcome}
               />
             )}
 
@@ -675,6 +817,27 @@ function App() {
         competitors={competitors}
         onSelect={handleSelectCompetitor}
         onDelete={handleDeleteCompetitor}
+      />
+
+      {/* Keyboard Shortcuts Modal */}
+      <KeyboardShortcutsModal
+        isOpen={showKeyboardHelp}
+        onClose={() => setShowKeyboardHelp(false)}
+      />
+
+      {/* Unsaved Changes Confirmation */}
+      <ConfirmDialog
+        isOpen={showUnsavedConfirm}
+        onClose={() => {
+          setShowUnsavedConfirm(false);
+          setPendingNewAnalysis(false);
+        }}
+        onConfirm={handleConfirmNewAnalysis}
+        title="Unsaved Analysis"
+        message={`You have an unsaved analysis for "${currentAnalysis?.companyName}". Do you want to discard it?`}
+        confirmText="Discard"
+        cancelText="Save First"
+        variant="warning"
       />
 
       {/* Toast */}

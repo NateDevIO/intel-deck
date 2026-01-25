@@ -11,7 +11,7 @@ export function LoadingSpinner({ size = 'md', message }) {
     <div className="flex flex-col items-center justify-center py-12">
       <Loader2 className={`${sizes[size]} animate-spin text-primary-600`} />
       {message && (
-        <p className="mt-4 text-gray-600 text-sm">{message}</p>
+        <p className="mt-4 text-gray-600 dark:text-gray-400 text-sm">{message}</p>
       )}
     </div>
   );

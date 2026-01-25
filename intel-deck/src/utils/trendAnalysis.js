@@ -161,6 +161,8 @@ function generateChangeSummary(changes) {
 export function calculateConfidenceScore(analysis) {
   let score = 0;
   let maxScore = 0;
+  const missing = [];
+  const present = [];
 
   // Pricing completeness (40 points)
   maxScore += 40;
@@ -168,35 +170,93 @@ export function calculateConfidenceScore(analysis) {
     score += 20;
     const tiersWithPrice = analysis.pricing.tiers.filter(t => t.price && t.price !== 'null');
     score += Math.min(20, (tiersWithPrice.length / analysis.pricing.tiers.length) * 20);
+    present.push('Pricing tiers');
+    if (tiersWithPrice.length < analysis.pricing.tiers.length) {
+      missing.push('Some tier prices');
+    }
+  } else {
+    missing.push('Pricing tiers');
   }
 
   // Positioning completeness (25 points)
   maxScore += 25;
-  if (analysis?.positioning?.tagline) score += 5;
-  if (analysis?.positioning?.targetCustomers?.length > 0) score += 5;
-  if (analysis?.positioning?.differentiators?.length > 0) score += 10;
-  if (analysis?.positioning?.valuePropositions?.length > 0) score += 5;
+  if (analysis?.positioning?.tagline) {
+    score += 5;
+    present.push('Tagline');
+  } else {
+    missing.push('Tagline');
+  }
+  if (analysis?.positioning?.targetCustomers?.length > 0) {
+    score += 5;
+    present.push('Target customers');
+  } else {
+    missing.push('Target customers');
+  }
+  if (analysis?.positioning?.differentiators?.length > 0) {
+    score += 10;
+    present.push('Differentiators');
+  } else {
+    missing.push('Differentiators');
+  }
+  if (analysis?.positioning?.valuePropositions?.length > 0) {
+    score += 5;
+    present.push('Value propositions');
+  } else {
+    missing.push('Value propositions');
+  }
 
   // Features completeness (15 points)
   maxScore += 15;
-  if (analysis?.features?.highlighted?.length > 0) score += 10;
-  if (analysis?.features?.byTier && Object.keys(analysis.features.byTier).length > 0) score += 5;
+  if (analysis?.features?.highlighted?.length > 0) {
+    score += 10;
+    present.push('Highlighted features');
+  } else {
+    missing.push('Highlighted features');
+  }
+  if (analysis?.features?.byTier && Object.keys(analysis.features.byTier).length > 0) {
+    score += 5;
+    present.push('Features by tier');
+  } else {
+    missing.push('Features by tier');
+  }
 
   // Social proof completeness (15 points)
   maxScore += 15;
-  if (analysis?.socialProof?.customerLogos?.length > 0) score += 5;
-  if (analysis?.socialProof?.metricsClaimed?.length > 0) score += 5;
-  if (analysis?.socialProof?.partnerships?.length > 0) score += 5;
+  if (analysis?.socialProof?.customerLogos?.length > 0) {
+    score += 5;
+    present.push('Customer logos');
+  } else {
+    missing.push('Customer logos');
+  }
+  if (analysis?.socialProof?.metricsClaimed?.length > 0) {
+    score += 5;
+    present.push('Metrics claimed');
+  } else {
+    missing.push('Metrics claimed');
+  }
+  if (analysis?.socialProof?.partnerships?.length > 0) {
+    score += 5;
+    present.push('Partnerships');
+  } else {
+    missing.push('Partnerships');
+  }
 
   // CTAs (5 points)
   maxScore += 5;
-  if (analysis?.callsToAction?.primary) score += 5;
+  if (analysis?.callsToAction?.primary) {
+    score += 5;
+    present.push('Call to action');
+  } else {
+    missing.push('Call to action');
+  }
 
   const percentage = Math.round((score / maxScore) * 100);
 
   return {
     score: percentage,
     level: percentage >= 80 ? 'high' : percentage >= 50 ? 'medium' : 'low',
-    label: percentage >= 80 ? 'High Confidence' : percentage >= 50 ? 'Medium Confidence' : 'Low Confidence'
+    label: percentage >= 80 ? 'High Confidence' : percentage >= 50 ? 'Medium Confidence' : 'Low Confidence',
+    missing,
+    present
   };
 }

@@ -6,6 +6,7 @@ export function useKeyboardShortcuts({
   onFocusSearch,
   onCloseModal,
   onToggleExport,
+  onShowHelp,
   canSave = false,
   isModalOpen = false
 }) {
@@ -26,6 +27,13 @@ export function useKeyboardShortcuts({
     if (isInputFocused) return;
 
     const isMod = e.ctrlKey || e.metaKey;
+
+    // ? - Show keyboard shortcuts help
+    if (e.key === '?' && !isMod) {
+      e.preventDefault();
+      onShowHelp?.();
+      return;
+    }
 
     // Ctrl/Cmd + N - New analysis
     if (isMod && e.key === 'n') {
@@ -56,7 +64,7 @@ export function useKeyboardShortcuts({
       onFocusSearch?.();
       return;
     }
-  }, [onNewAnalysis, onSave, onFocusSearch, onCloseModal, onToggleExport, canSave, isModalOpen]);
+  }, [onNewAnalysis, onSave, onFocusSearch, onCloseModal, onToggleExport, onShowHelp, canSave, isModalOpen]);
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);

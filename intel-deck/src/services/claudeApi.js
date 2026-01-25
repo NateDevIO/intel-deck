@@ -77,16 +77,41 @@ SOURCE CONTENT:
 ---`;
 
 export async function analyzeContent(content) {
-  const response = await fetch('/api/claude', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      prompt: EXTRACTION_PROMPT.replace('{content}', content),
-      maxTokens: 4096
-    })
-  });
+  // Check if we have a direct API key (local development)
+  const directApiKey = import.meta.env.VITE_CLAUDE_API_KEY;
+  const prompt = EXTRACTION_PROMPT.replace('{content}', content);
+
+  let response;
+
+  if (directApiKey) {
+    // Direct API call (local development)
+    response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': directApiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 4096,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+  } else {
+    // Proxy call (production on Vercel)
+    response = await fetch('/api/claude', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        prompt,
+        maxTokens: 4096
+      })
+    });
+  }
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));

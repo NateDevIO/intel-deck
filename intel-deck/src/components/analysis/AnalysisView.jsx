@@ -10,6 +10,8 @@ import { SwotCard } from './SwotCard';
 import { TalkingPointsCard } from './TalkingPointsCard';
 import { TrendCard } from './TrendCard';
 import { ConfidenceScore } from './ConfidenceScore';
+import { WinLossTracker } from './WinLossTracker';
+import { PriceHistoryChart } from './PriceHistoryChart';
 
 export function AnalysisView({
   analysis,
@@ -26,7 +28,9 @@ export function AnalysisView({
   isGeneratingTalkingPoints = false,
   trendChanges = null,
   previousAnalysisDate = null,
-  confidence = null
+  confidence = null,
+  onAddOutcome,
+  onRemoveOutcome
 }) {
   if (!analysis) return null;
 
@@ -54,11 +58,11 @@ export function AnalysisView({
   return (
     <div className="space-y-6">
       {/* Company Header */}
-      <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm p-6">
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <h2 className="text-2xl font-bold text-gray-900">{companyName}</h2>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{companyName}</h2>
               {isSaved && (
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs font-medium">
                   <Check className="w-3 h-3" />
@@ -68,10 +72,10 @@ export function AnalysisView({
               {confidence && <ConfidenceScore confidence={confidence} />}
             </div>
             {positioning?.tagline && (
-              <p className="text-gray-600 mt-1 italic">"{positioning.tagline}"</p>
+              <p className="text-gray-600 dark:text-gray-400 mt-1 italic">"{positioning.tagline}"</p>
             )}
 
-            <div className="flex items-center gap-4 mt-3 text-sm text-gray-500">
+            <div className="flex items-center gap-4 mt-3 text-sm text-gray-500 dark:text-gray-400">
               {formattedDate && (
                 <div className="flex items-center gap-1.5">
                   <Calendar className="w-4 h-4" />
@@ -136,9 +140,41 @@ export function AnalysisView({
         </div>
       </div>
 
+      {/* Win/Loss Tracking - only for saved competitors */}
+      {isSaved && (
+        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm p-6">
+          <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Deal Outcomes</h3>
+          <WinLossTracker
+            competitorId={analysis.id}
+            outcomes={analysis.outcomes || []}
+            onAddOutcome={onAddOutcome}
+            onRemoveOutcome={onRemoveOutcome}
+          />
+        </div>
+      )}
+
       {/* Trend Changes */}
       {trendChanges && trendChanges.length > 0 && (
         <TrendCard changes={trendChanges} previousDate={previousAnalysisDate} />
+      )}
+
+      {/* Price History Chart - show if we have history */}
+      {analysis.priceHistory && analysis.priceHistory.length >= 1 && (
+        <PriceHistoryChart
+          priceHistory={[
+            ...analysis.priceHistory,
+            // Add current pricing as latest point
+            {
+              date: analysis.analyzedAt,
+              tiers: analysis.pricing?.tiers?.map(t => ({
+                name: t.name,
+                price: t.price,
+                priceModel: t.priceModel
+              })) || []
+            }
+          ]}
+          companyName={companyName}
+        />
       )}
 
       {/* Analysis Cards */}

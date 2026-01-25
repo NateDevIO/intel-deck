@@ -1,10 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '../common/Button';
 import { fetchUrlContent } from '../../services/urlFetcher';
 
-export function UrlInput({ onContentFetched, isLoading: externalLoading }) {
-  const [url, setUrl] = useState('');
+export function UrlInput({ onContentFetched, isLoading: externalLoading, initialUrl }) {
+  const [url, setUrl] = useState(initialUrl || '');
+
+  // Update URL if initialUrl changes (e.g., from onboarding)
+  useEffect(() => {
+    if (initialUrl) {
+      setUrl(initialUrl);
+    }
+  }, [initialUrl]);
   const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState(null);
   const [fetchSource, setFetchSource] = useState(null);

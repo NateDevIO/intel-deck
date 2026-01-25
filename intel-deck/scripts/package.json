@@ -1,0 +1,11 @@
+{
+  "name": "intel-deck-screenshots",
+  "version": "1.0.0",
+  "description": "Screenshot capture for README documentation",
+  "scripts": {
+    "capture": "node capture_assets.js"
+  },
+  "dependencies": {
+    "puppeteer": "^21.0.0"
+  }
+}

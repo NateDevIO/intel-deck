@@ -1,107 +1,175 @@
 # Intel Deck
 
-AI-powered competitive intelligence tool that transforms competitor websites into structured battlecards for sales teams.
+**AI-powered competitive intelligence that transforms competitor websites into actionable battlecards.**
 
-**Live Demo:** [intel-deck.vercel.app](https://intel-deck.vercel.app)
+[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://intel-deck.vercel.app)
+[![React](https://img.shields.io/badge/React-19-blue)](https://react.dev)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-38bdf8)](https://tailwindcss.com)
+[![Claude AI](https://img.shields.io/badge/Claude-API-orange)](https://anthropic.com)
+
+[Live Demo](https://intel-deck.vercel.app) | [Features](#features) | [Quick Start](#quick-start) | [Screenshots](#screenshots)
+
+---
+
+## The Problem
+
+Sales teams spend **2-3 hours per competitor** manually researching pricing pages, copying information into spreadsheets, and formatting battlecards. This process repeats every time a competitor updates their pricing, and the information quickly becomes stale.
+
+## The Solution
+
+Intel Deck automates competitive intelligence extraction in **under 2 minutes**. Paste a URL, get a structured battlecard with pricing tiers, positioning, features, social proof, and AI-generated insights.
+
+| Metric | Manual Process | Intel Deck |
+|--------|---------------|------------|
+| Time per competitor | 2-3 hours | < 2 minutes |
+| Update frequency | Quarterly (outdated) | On-demand (always current) |
+| Consistency | Variable by analyst | Standardized structure |
+| Cost per analysis | $50-100 (analyst time) | ~$0.03 (API costs) |
+
+---
+
+## Screenshots
+
+### Analysis View
+Extract structured pricing, positioning, and features from any competitor's website.
+
+![Analysis View](docs/screenshots/02-analysis-view.png)
+
+### Comparison View
+Compare multiple competitors side-by-side with AI-generated strategic insights.
+
+![Comparison View](docs/screenshots/03-comparison-view.png)
+
+### Dark Mode
+Full dark mode support for comfortable viewing in any environment.
+
+![Dark Mode](docs/screenshots/04-dark-mode.png)
+
+### Mobile Responsive
+Works seamlessly on mobile devices with dedicated navigation.
+
+<img src="docs/screenshots/05-mobile.png" alt="Mobile View" width="300">
+
+### Keyboard Shortcuts
+Power user shortcuts for efficient navigation.
+
+![Keyboard Shortcuts](docs/screenshots/06-keyboard-shortcuts.png)
+
+---
 
 ## Features
 
-- **URL Analysis** - Paste any competitor's pricing or product page URL
-- **Batch Analysis** - Analyze multiple competitors at once (up to 10 URLs)
+### Core Intelligence
+- **URL Analysis** - Paste any competitor's pricing or product page
+- **Batch Analysis** - Analyze up to 10 competitors at once with progress tracking
 - **AI Extraction** - Claude AI extracts pricing, positioning, features, and social proof
-- **Multi-dimensional Pricing** - Handles complex pricing (multiple seat types, usage tiers)
+- **Multi-dimensional Pricing** - Handles complex pricing models (seat-based, usage-based, custom)
+- **Confidence Scoring** - Click to see exactly what data was found vs missing
+
+### AI-Powered Insights
 - **SWOT Analysis** - Auto-generated strengths, weaknesses, opportunities, threats
-- **Sales Talking Points** - AI-generated competitive positioning for sales calls
+- **Sales Talking Points** - AI-generated objection handlers and competitive positioning
+- **Comparison Summary** - Strategic analysis when comparing multiple competitors
+- **Trend Detection** - Tracks pricing and feature changes over time
+
+### Sales Enablement
+- **Win/Loss Tracking** - Log deal outcomes against each competitor with win rate analytics
+- **Price History Charts** - Visualize competitor pricing changes over time
+- **Positioning Matrix** - 2x2 grid plotting competitors on Price vs Features axes
 - **Competitor Library** - Save and organize multiple competitor analyses
-- **Side-by-Side Comparison** - Compare two or more competitors directly
-- **Dark Mode** - Full dark mode support
-- **Mobile Responsive** - Works on mobile devices with dedicated navigation
-- **Multiple Export Formats**:
-  - Markdown (for docs/wikis)
-  - Slack message (formatted for channels)
-  - JSON (for integrations)
-  - PDF battlecard (print-ready)
+
+### User Experience
+- **Dark Mode** - Full dark mode support throughout the application
+- **Mobile Responsive** - Dedicated mobile navigation and layouts
+- **Keyboard Shortcuts** - Press `?` to see all available shortcuts
+- **Onboarding Flow** - First-time user guidance with example URLs
+- **Batch Error Recovery** - Failed URLs tracked with retry option
+
+### Export & Integration
+- **Markdown** - For docs, wikis, and collaboration tools
+- **Slack Message** - Pre-formatted for team channels
+- **JSON** - For CRM and tool integrations
+- **PDF Battlecard** - Print-ready competitive intelligence
+
+---
 
 ## Tech Stack
 
-- **Frontend**: React 19 + Vite 7
-- **Styling**: Tailwind CSS v4
-- **AI**: Claude API (Anthropic) via Vercel Serverless Functions
-- **URL Fetching**: Jina AI Reader (primary) + Browserless.io (fallback for JS-heavy sites)
-- **Hosting**: Vercel
-- **Icons**: Lucide React
+| Category | Technology |
+|----------|------------|
+| Frontend | React 19, Vite 7 |
+| Styling | Tailwind CSS v4 |
+| AI | Claude API (Anthropic) |
+| URL Parsing | Jina AI Reader (primary), Browserless.io (fallback) |
+| Deployment | Vercel Serverless Functions |
+| Icons | Lucide React |
 
-## Quick Start (Local Development)
+---
 
-1. **Clone and install**
-   ```bash
-   cd intel-deck
-   npm install
-   ```
+## Quick Start
 
-2. **Configure environment**
-   ```bash
-   cp .env.example .env.local
-   ```
+### Local Development
 
-   Edit `.env.local` and add your API keys:
-   ```
-   VITE_CLAUDE_API_KEY=sk-ant-api03-your-key-here
-   VITE_BROWSERLESS_TOKEN=your-browserless-token (optional)
-   ```
+```bash
+# Clone and install
+git clone https://github.com/NateDevIO/intel-deck.git
+cd intel-deck/intel-deck
+npm install
 
-3. **Start development server**
-   ```bash
-   npm run dev
-   ```
+# Configure environment
+cp .env.example .env.local
+# Edit .env.local with your API key:
+# VITE_CLAUDE_API_KEY=sk-ant-api03-your-key-here
 
-4. **Open** http://localhost:5173
+# Start development
+npm run dev
+```
 
-## Deploying to Vercel
+Open http://localhost:5173
 
-The recommended deployment method uses Vercel with serverless functions to keep API keys secure.
+### Getting an API Key
+
+1. Sign up at [console.anthropic.com](https://console.anthropic.com/)
+2. Create an API key
+3. Add to your `.env.local` file
+
+---
+
+## Deployment
+
+### Vercel (Recommended)
 
 1. **Push to GitHub**
 
 2. **Import to Vercel**
-   - Connect your GitHub repo to Vercel
+   - Connect your GitHub repo
    - Set **Root Directory** to `intel-deck`
    - Framework preset: Vite (auto-detected)
 
-3. **Add Environment Variables** (in Vercel Project Settings)
+3. **Add Environment Variables**
 
    | Variable | Required | Description |
    |----------|----------|-------------|
-   | `CLAUDE_API_KEY` | Yes | Your Anthropic API key (no VITE_ prefix!) |
-   | `BROWSERLESS_TOKEN` | No | Browserless.io token for JS-heavy sites |
+   | `CLAUDE_API_KEY` | Yes | Anthropic API key (no VITE_ prefix) |
+   | `BROWSERLESS_TOKEN` | No | For JS-heavy sites |
 
-   **Important:** Use `CLAUDE_API_KEY` (not `VITE_CLAUDE_API_KEY`) for Vercel deployment. This keeps the key server-side and secure.
+   **Important:** Use `CLAUDE_API_KEY` (not `VITE_CLAUDE_API_KEY`) for Vercel. This keeps the key server-side and secure.
 
-4. **Deploy** - Vercel will auto-deploy on every push to main
+4. **Deploy** - Auto-deploys on every push to main
 
-## Environment Variables
+---
 
-### For Local Development (.env.local)
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `VITE_CLAUDE_API_KEY` | Yes | Your Anthropic API key ([get one](https://console.anthropic.com/)) |
-| `VITE_BROWSERLESS_TOKEN` | No | Browserless.io token for JS-heavy sites |
+## Usage Guide
 
-### For Vercel Production
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `CLAUDE_API_KEY` | Yes | Your Anthropic API key (server-side, secure) |
-| `BROWSERLESS_TOKEN` | No | Browserless.io token (server-side, secure) |
+1. **Analyze** - Enter a pricing page URL (e.g., `slack.com/pricing`)
+2. **Review** - Check extracted pricing, positioning, and features
+3. **Enhance** - SWOT analysis and talking points generate automatically
+4. **Save** - Add to your competitor library for tracking
+5. **Compare** - Select 2+ competitors for side-by-side analysis
+6. **Track** - Log wins/losses to see patterns over time
+7. **Export** - Share in your preferred format
 
-## Usage
-
-1. **Analyze a competitor**: Enter a pricing page URL (e.g., `https://slack.com/pricing`)
-2. **Review extraction**: Check the pricing tiers, positioning, and features
-3. **Auto-generated insights**: SWOT analysis and talking points generate automatically
-4. **Save to library**: Click "Save" to add to your competitor library
-5. **Export**: Use the export menu to share in your preferred format
-6. **Compare**: With 2+ saved competitors, use the compare feature
-7. **Batch analyze**: Use "Batch URLs" tab to analyze multiple competitors at once
+---
 
 ## Keyboard Shortcuts
 
@@ -109,53 +177,117 @@ The recommended deployment method uses Vercel with serverless functions to keep 
 |----------|--------|
 | `Ctrl+N` | New analysis |
 | `Ctrl+S` | Save current analysis |
+| `Ctrl+Enter` | Submit URL |
 | `/` | Focus search |
+| `?` | Show keyboard shortcuts |
+| `Esc` | Close modals |
+
+---
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     Frontend (React 19)                      │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐  │
+│  │ URL Input   │  │  Analysis   │  │   Comparison View   │  │
+│  │ (Single/    │  │    View     │  │   + AI Summary +    │  │
+│  │   Batch)    │  │  + SWOT     │  │ Positioning Matrix  │  │
+│  └──────┬──────┘  └──────┬──────┘  └──────────┬──────────┘  │
+│         │                │                     │             │
+│  ┌──────▼─────────────────▼─────────────────────▼──────────┐ │
+│  │         State Management (hooks + localStorage)         │ │
+│  │  • useCompetitors (CRUD + price history)                │ │
+│  │  • useDarkMode, useKeyboardShortcuts                    │ │
+│  └──────────────────────────┬──────────────────────────────┘ │
+└─────────────────────────────┼───────────────────────────────┘
+                              │
+                    ┌─────────▼─────────┐
+                    │  Vercel Serverless │
+                    │     Functions      │
+                    │  ┌──────────────┐  │
+                    │  │ /api/claude  │◄─┼── Claude API (secure)
+                    │  └──────────────┘  │
+                    │  ┌──────────────┐  │
+                    │  │/api/fetch-url│◄─┼── Browserless (optional)
+                    │  └──────────────┘  │
+                    └────────────────────┘
+                              │
+              ┌───────────────┼───────────────┐
+              ▼               ▼               ▼
+        ┌──────────┐   ┌──────────┐   ┌──────────────┐
+        │ Jina AI  │   │  Claude  │   │ Browserless  │
+        │ (Free)   │   │   API    │   │  (Optional)  │
+        └──────────┘   └──────────┘   └──────────────┘
+```
+
+---
 
 ## Project Structure
 
 ```
 intel-deck/
-├── api/                    # Vercel serverless functions
-│   ├── claude.js          # Claude API proxy
-│   └── fetch-url.js       # Browserless proxy
+├── api/                      # Vercel serverless functions
+│   ├── claude.js            # Claude API proxy (keeps key secure)
+│   └── fetch-url.js         # Browserless proxy for JS-heavy sites
 ├── src/
 │   ├── components/
-│   │   ├── analysis/      # Analysis display components
-│   │   ├── common/        # Shared UI components
-│   │   ├── comparison/    # Competitor comparison view
-│   │   ├── export/        # Export functionality
-│   │   ├── input/         # URL input forms
-│   │   └── layout/        # Header, Sidebar, layout
-│   ├── hooks/             # Custom React hooks
-│   ├── services/          # API integrations
-│   ├── utils/             # Export templates, helpers
-│   └── data/              # Sample data
-├── cloudflare-worker/     # Legacy CORS proxy (not needed for Vercel)
-└── public/
+│   │   ├── analysis/        # Analysis cards, charts, SWOT
+│   │   ├── common/          # Button, Modal, Loading states
+│   │   ├── comparison/      # Side-by-side view, matrix
+│   │   ├── export/          # Export menu, format handlers
+│   │   ├── input/           # URL input, batch mode
+│   │   └── layout/          # Header, Sidebar
+│   ├── hooks/               # useCompetitors, useDarkMode, etc.
+│   ├── services/            # Claude API, URL fetching
+│   └── utils/               # Export templates, trend analysis
+├── docs/screenshots/         # README screenshots
+├── scripts/                  # Build & capture scripts
+└── public/                   # Static assets
 ```
 
-## API Usage & Costs
+---
 
-The app uses:
-- **Claude API** - For content analysis (~4K tokens per analysis)
-- **Jina AI** - Free URL-to-markdown conversion
-- **Browserless** (optional) - Headless Chrome for JS rendering
+## API Costs
 
-Typical usage: ~$0.01-0.03 per competitor analysis with Claude.
+| Service | Usage | Cost |
+|---------|-------|------|
+| Claude API | ~4K tokens/analysis | ~$0.01-0.03 |
+| Jina AI | URL parsing | Free |
+| Browserless | JS rendering (optional) | Pay-as-you-go |
 
-## Building for Production
+Typical: **~$0.03 per competitor analysis**
 
-```bash
-npm run build
-npm run preview  # Test production build locally
-```
+---
 
-Output is in `dist/` - deploy to Vercel, Netlify, or any static hosting.
+## Why I Built This
 
-## Credits
+Competitive intelligence is one of the last manual processes in modern sales organizations. CRMs are automated, outreach is sequenced, forecasting uses AI - but battlecard creation still involves copying and pasting from competitor websites.
 
-Coded by Nate
+This project demonstrates:
+
+1. **Full-stack Product Development** - From concept to deployed production application
+2. **AI Integration** - Practical use of LLMs for structured data extraction
+3. **Sales Domain Knowledge** - Understanding what information sales teams actually need
+4. **User Experience Focus** - Making complex data accessible and actionable
+5. **Production-Grade Architecture** - Secure API handling, error recovery, responsive design
+
+---
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+---
 
 ## License
 
-MIT
+MIT License - see [LICENSE](LICENSE) for details.
+
+---
+
+## Credits
+
+Built by [Nate](https://github.com/NateDevIO)
+
+Powered by [Claude](https://anthropic.com) | [React](https://react.dev) | [Tailwind CSS](https://tailwindcss.com) | [Vercel](https://vercel.com)

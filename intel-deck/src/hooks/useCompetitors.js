@@ -13,12 +13,32 @@ export function useCompetitors() {
       );
 
       if (existingIndex >= 0) {
-        // Update existing
+        // Update existing - also track price history
+        const existing = prev[existingIndex];
+        const existingHistory = existing.priceHistory || [];
+
+        // Add previous pricing to history if it exists
+        const newHistoryEntry = existing.pricing?.tiers ? {
+          date: existing.analyzedAt,
+          tiers: existing.pricing.tiers.map(t => ({
+            name: t.name,
+            price: t.price,
+            priceModel: t.priceModel
+          }))
+        } : null;
+
+        // Build updated history (avoid duplicates by date)
+        const updatedHistory = newHistoryEntry && !existingHistory.some(h => h.date === newHistoryEntry.date)
+          ? [...existingHistory, newHistoryEntry]
+          : existingHistory;
+
         const updated = [...prev];
         updated[existingIndex] = {
           ...analysis,
-          id: prev[existingIndex].id, // Keep original ID
-          previousAnalysis: prev[existingIndex] // Store previous for comparison
+          id: existing.id, // Keep original ID
+          previousAnalysis: existing, // Store previous for comparison
+          priceHistory: updatedHistory,
+          outcomes: existing.outcomes // Preserve win/loss outcomes
         };
         return updated;
       }

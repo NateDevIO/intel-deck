@@ -39,19 +39,19 @@ export function PositioningCard({ positioning }) {
         <div>
           <div className="flex items-center gap-2 mb-3">
             <Target className="w-4 h-4 text-primary-600" />
-            <h4 className="text-sm font-medium text-gray-700">Target Customers</h4>
+            <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Target Customers</h4>
           </div>
           <div className="flex flex-wrap gap-2">
             {positioning.targetCustomers?.map((customer, i) => (
               <span
                 key={i}
-                className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm"
+                className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm"
               >
                 {customer}
               </span>
             ))}
             {(!positioning.targetCustomers || positioning.targetCustomers.length === 0) && (
-              <span className="text-sm text-gray-400">Not identified</span>
+              <span className="text-sm text-gray-400 dark:text-gray-500">Not identified</span>
             )}
           </div>
         </div>
@@ -60,17 +60,17 @@ export function PositioningCard({ positioning }) {
         <div>
           <div className="flex items-center gap-2 mb-3">
             <Zap className="w-4 h-4 text-primary-600" />
-            <h4 className="text-sm font-medium text-gray-700">Key Differentiators</h4>
+            <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Key Differentiators</h4>
           </div>
           <ul className="space-y-2">
             {positioning.differentiators?.map((diff, i) => (
-              <li key={i} className="text-sm text-gray-600 flex items-start gap-2">
+              <li key={i} className="text-sm text-gray-600 dark:text-gray-400 flex items-start gap-2">
                 <span className="text-primary-500 mt-1">-</span>
                 {diff}
               </li>
             ))}
             {(!positioning.differentiators || positioning.differentiators.length === 0) && (
-              <li className="text-sm text-gray-400">Not identified</li>
+              <li className="text-sm text-gray-400 dark:text-gray-500">Not identified</li>
             )}
           </ul>
         </div>
@@ -80,11 +80,11 @@ export function PositioningCard({ positioning }) {
           <div className="md:col-span-2">
             <div className="flex items-center gap-2 mb-3">
               <Lightbulb className="w-4 h-4 text-primary-600" />
-              <h4 className="text-sm font-medium text-gray-700">Value Propositions</h4>
+              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Value Propositions</h4>
             </div>
             <ul className="space-y-2">
               {positioning.valuePropositions.map((prop, i) => (
-                <li key={i} className="text-sm text-gray-600 flex items-start gap-2">
+                <li key={i} className="text-sm text-gray-600 dark:text-gray-400 flex items-start gap-2">
                   <span className="text-amber-500 mt-1">-</span>
                   {prop}
                 </li>

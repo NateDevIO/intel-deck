@@ -12,7 +12,7 @@ const TABS = [
   { id: 'paste', label: 'Paste Text', icon: ClipboardPaste },
 ];
 
-export function InputPanel({ onAnalyze, onBatchAnalyze, isLoading }) {
+export function InputPanel({ onAnalyze, onBatchAnalyze, isLoading, initialUrl }) {
   const [activeTab, setActiveTab] = useState('url');
   const [content, setContent] = useState('');
   const [sourceUrl, setSourceUrl] = useState(null);
@@ -98,6 +98,7 @@ export function InputPanel({ onAnalyze, onBatchAnalyze, isLoading }) {
           <UrlInput
             onContentFetched={handleUrlContentFetched}
             isLoading={isLoading}
+            initialUrl={initialUrl}
           />
         )}
 
