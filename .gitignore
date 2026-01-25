@@ -29,5 +29,5 @@ yarn-error.log*
 tmpclaude-*
 nul
 
-# Claude
-.claude/
+# Claude (keep shared settings, ignore local)
+.claude/settings.local.json
