@@ -7,7 +7,7 @@
  */
 
 import { useState, useEffect, useRef } from 'react';
-import { Search, AlertCircle } from 'lucide-react';
+import { Search, AlertCircle, Github, Linkedin, Globe } from 'lucide-react';
 import { Header } from './components/layout/Header';
 import { Sidebar } from './components/layout/Sidebar';
 import { InputPanel } from './components/input/InputPanel';
@@ -851,15 +851,41 @@ function App() {
 
       {/* Footer */}
       <footer className="py-3 text-center text-xs text-gray-400 dark:text-gray-500 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900">
-        <span>Coded by Nate</span>
-        <span className="mx-2">|</span>
-        <span className="text-gray-300 dark:text-gray-600">
-          <kbd className="px-1 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-[10px]">Ctrl</kbd>+<kbd className="px-1 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-[10px]">N</kbd> New
-          <span className="mx-1.5">/</span>
-          <kbd className="px-1 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-[10px]">Ctrl</kbd>+<kbd className="px-1 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-[10px]">S</kbd> Save
-          <span className="mx-1.5">/</span>
-          <kbd className="px-1 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-[10px]">/</kbd> Search
-        </span>
+        <div className="flex items-center justify-center gap-4">
+          <span>Coded by Nate</span>
+          <div className="flex items-center gap-2">
+            <a
+              href="https://github.com/NateDevIO"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              title="GitHub"
+            >
+              <Github className="w-4 h-4" />
+            </a>
+            <a
+              href="https://linkedin.com/in/NateDevIO"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              title="LinkedIn"
+            >
+              <Linkedin className="w-4 h-4" />
+            </a>
+            <a
+              href="https://natedev.io"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              title="Website"
+            >
+              <Globe className="w-4 h-4" />
+            </a>
+          </div>
+          <span className="hidden sm:inline text-gray-300 dark:text-gray-600">
+            <kbd className="px-1 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-[10px]">?</kbd> Shortcuts
+          </span>
+        </div>
       </footer>
     </div>
   );
