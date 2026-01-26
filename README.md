@@ -113,7 +113,7 @@ Power user shortcuts for efficient navigation.
 ```bash
 # Clone and install
 git clone https://github.com/NateDevIO/intel-deck.git
-cd intel-deck/intel-deck
+cd intel-deck
 npm install
 
 # Configure environment
@@ -143,7 +143,6 @@ Open http://localhost:5173
 
 2. **Import to Vercel**
    - Connect your GitHub repo
-   - Set **Root Directory** to `intel-deck`
    - Framework preset: Vite (auto-detected)
 
 3. **Add Environment Variables**
@@ -226,7 +225,7 @@ Open http://localhost:5173
 ## Project Structure
 
 ```
-intel-deck/
+.
 ├── api/                      # Vercel serverless functions
 │   ├── claude.js            # Claude API proxy (keeps key secure)
 │   └── fetch-url.js         # Browserless proxy for JS-heavy sites
@@ -241,7 +240,9 @@ intel-deck/
 │   ├── hooks/               # useCompetitors, useDarkMode, etc.
 │   ├── services/            # Claude API, URL fetching
 │   └── utils/               # Export templates, trend analysis
-├── docs/screenshots/         # README screenshots
+├── docs/
+│   ├── screenshots/         # README screenshots
+│   └── specs/               # Development specifications
 ├── scripts/                  # Build & capture scripts
 └── public/                   # Static assets
 ```
