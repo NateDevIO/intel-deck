@@ -882,9 +882,12 @@ function App() {
               <Globe className="w-4 h-4" />
             </a>
           </div>
-          <span className="hidden sm:inline text-gray-300 dark:text-gray-600">
+          <button
+            onClick={() => setShowKeyboardHelp(true)}
+            className="hidden sm:inline-flex items-center gap-1 text-gray-300 dark:text-gray-600 hover:text-gray-500 dark:hover:text-gray-400 transition-colors"
+          >
             <kbd className="px-1 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-[10px]">?</kbd> Shortcuts
-          </span>
+          </button>
         </div>
       </footer>
     </div>
