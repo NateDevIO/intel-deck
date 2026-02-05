@@ -82,7 +82,7 @@ The AI extracts and structures the following from input content:
 ```
 Frontend:  React 18 + Vite
 Styling:   Tailwind CSS
-AI:        Claude API (claude-sonnet-4-20250514)
+AI:        Claude API (Sonnet)
 Storage:   localStorage (MVP) → Supabase (future)
 Scraping:  Cheerio (static) or paste-only for MVP
 ```
