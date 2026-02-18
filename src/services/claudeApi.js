@@ -94,7 +94,7 @@ export async function analyzeContent(content) {
         'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-latest',
+        model: import.meta.env.VITE_CLAUDE_MODEL || 'claude-sonnet-4-6-latest',
         max_tokens: 4096,
         messages: [{ role: 'user', content: prompt }]
       })

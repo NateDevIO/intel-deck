@@ -63,7 +63,7 @@ async function callClaudeAPI(prompt) {
         'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-latest',
+        model: import.meta.env.VITE_CLAUDE_MODEL || 'claude-sonnet-4-6-latest',
         max_tokens: 2048,
         messages: [{ role: 'user', content: prompt }]
       })
