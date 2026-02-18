@@ -185,6 +185,11 @@ export function AnalysisView({
       <CtaCard callsToAction={callsToAction} />
 
       {/* AI-Generated Insights */}
+      {(isGeneratingSwot || isGeneratingTalkingPoints) && !swot && !talkingPoints && (
+        <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg px-4 py-3 text-sm text-amber-800 dark:text-amber-200">
+          <span className="font-semibold">Note:</span> AI-powered SWOT Analysis and Talking Points are generating and may take an additional 20–30 seconds.
+        </div>
+      )}
       {(swot || isGeneratingSwot) && (
         <SwotCard swot={swot} isLoading={isGeneratingSwot} />
       )}
