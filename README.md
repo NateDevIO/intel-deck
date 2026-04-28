@@ -151,10 +151,17 @@ Open http://localhost:5173
    |----------|----------|-------------|
    | `CLAUDE_API_KEY` | Yes | Anthropic API key (no VITE_ prefix) |
    | `BROWSERLESS_TOKEN` | No | For JS-heavy sites |
+   | `VITE_BROWSERLESS_PROXY_URL` | No | Cloudflare Worker proxy URL (only if using Browserless from the browser) |
 
    **Important:** Use `CLAUDE_API_KEY` (not `VITE_CLAUDE_API_KEY`) for Vercel. This keeps the key server-side and secure.
 
 4. **Deploy** - Auto-deploys on every push to main
+
+### Optional: Cloudflare Worker (Browserless CORS proxy)
+
+Browserless.io's API doesn't return CORS headers, so it can't be called directly from the browser. The repo includes a tiny Cloudflare Worker (`cloudflare-worker/worker.js`) that proxies the call and adds the headers. You only need this if you want to use Browserless for JS-heavy sites without a serverless function.
+
+See [`cloudflare-worker/README.md`](cloudflare-worker/README.md) for one-time deploy instructions (it stays well within the Workers free tier).
 
 ---
 
