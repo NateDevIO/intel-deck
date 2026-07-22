@@ -20,7 +20,7 @@ async function getLatestSonnetModel(apiKey) {
     });
 
     if (!response.ok) {
-      return cachedModel || 'claude-sonnet-4-6-latest';
+      return cachedModel || 'claude-sonnet-4-6';
     }
 
     const { data } = await response.json();
@@ -37,7 +37,7 @@ async function getLatestSonnetModel(apiKey) {
     console.error('Model discovery failed, using fallback:', err.message);
   }
 
-  return cachedModel || 'claude-sonnet-4-6-latest';
+  return cachedModel || 'claude-sonnet-4-6';
 }
 
 export default async function handler(req, res) {
@@ -59,7 +59,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Prompt is required' });
     }
 
-    const model = process.env.CLAUDE_MODEL || await getLatestSonnetModel(apiKey);
+    const model = process.env.ANTHROPIC_MODEL || await getLatestSonnetModel(apiKey);
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
